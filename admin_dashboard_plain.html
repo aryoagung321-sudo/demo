@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - User Detail</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab { background: #eee; padding: 8px 14px; border-radius: 5px; cursor: pointer; }
+    .tab.active { background: #2376e2; color: #fff; }
+    .section { display: none; }
+    .section.active { display: block; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+    th, td { border: 1px solid #ddd; padding: 6px 10px; }
+    th { background: #f5f5f5; }
+    .label { font-weight: bold; color: #2376e2; }
+    #map { width: 100%; height: 240px; margin-bottom: 16px; }
+    .realtime { color: #00a01a; font-weight: bold; animation: blink 1.5s infinite; }
+    @keyframes blink { 50% { opacity: 0.2; } }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+  <h2>Dashboard Admin - Monitoring User</h2>
+  <div class="tabs" id="tab-buttons">
+    <div class="tab active">GPS Logging</div>
+    <div class="tab">Contacts</div>
+    <div class="tab">SMS Logs</div>
+    <div class="tab">Call Logs</div>
+  </div>
+
+  <!-- GPS Logging Section -->
+  <div class="section active">
+    <h4>GPS Logging <span class="realtime">● Realtime</span></h4>
+    <div id="map"></div>
+    <table>
+      <tr><th>Waktu</th><th>Latitude</th><th>Longitude</th><th>Alamat</th></tr>
+      <tbody id="gps-log-table"></tbody>
+    </table>
+  </div>
+  <!-- Contacts Section -->
+  <div class="section">
+    <h4>Kontak</h4>
+    <table>
+      <tr>
+        <th class="label">Nama Kontak</th>
+        <th class="label">Nomor Telepon</th>
+      </tr>
+      <tr><td>Andi</td><td>081234567890</td></tr>
+      <tr><td>Siti</td><td>082198765432</td></tr>
+    </table>
+  </div>
+  <!-- SMS Logs Section -->
+  <div class="section">
+    <h4>SMS Logs</h4>
+    <table>
+      <tr>
+        <th class="label">Tipe SMS</th>
+        <th class="label">Nomor Pengirim/Penerima</th>
+        <th class="label">Isi Pesan</th>
+        <th class="label">Waktu</th>
+      </tr>
+      <tr><td>Masuk</td><td>081211122233</td><td>Halo</td><td>2025-08-03 15:15:00</td></tr>
+      <tr><td>Keluar</td><td>081244455566</td><td>Siap</td><td>2025-08-03 15:18:30</td></tr>
+    </table>
+  </div>
+  <!-- Call Logs Section -->
+  <div class="section">
+    <h4>Call Logs</h4>
+    <table>
+      <tr>
+        <th class="label">Tipe Panggilan</th>
+        <th class="label">Nomor</th>
+        <th class="label">Durasi (detik)</th>
+        <th class="label">Waktu</th>
+      </tr>
+      <tr><td>Masuk</td><td>081299988877</td><td>60</td><td>2025-08-03 14:55:10</td></tr>
+      <tr><td>Keluar</td><td>081255566677</td><td>120</td><td>2025-08-03 14:50:00</td></tr>
+    </table>
+  </div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Tabs
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.section');
+    tabs.forEach((tab, i) => {
+      tab.onclick = () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        sections[i].classList.add('active');
+      };
+    });
+
+    // Dummy GPS Data for demo
+    let gpsData = [
+      { time: "2025-08-03 15:30:40", lat: -6.210, lon: 106.820, address: "Jl. Sudirman, Jakarta" },
+      { time: "2025-08-03 15:28:20", lat: -6.200, lon: 106.816, address: "Jl. MH Thamrin, Jakarta" },
+    ];
+    // Tampilkan data awal
+    function renderGpsLog() {
+      const tbody = document.getElementById('gps-log-table');
+      tbody.innerHTML = gpsData.map(
+        d => `<tr><td>${d.time}</td><td>${d.lat}</td><td>${d.lon}</td><td>${d.address}</td></tr>`
+      ).join('');
+    }
+    renderGpsLog();
+
+    // Map setup (Leaflet)
+    var map = L.map('map').setView([gpsData[0].lat, gpsData[0].lon], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    var marker = L.marker([gpsData[0].lat, gpsData[0].lon]).addTo(map).bindPopup("Lokasi Terkini");
+
+    // Simulasi update realtime (dummy setiap 5 detik)
+    setInterval(function() {
+      const now = new Date();
+      const lat = gpsData[0].lat + (Math.random()-0.5)*0.001;
+      const lon = gpsData[0].lon + (Math.random()-0.5)*0.001;
+      gpsData.unshift({
+        time: now.toISOString().replace('T',' ').substring(0,19),
+        lat: +lat.toFixed(6),
+        lon: +lon.toFixed(6),
+        address: "Pindah, Jakarta"
+      });
+      if (gpsData.length > 10) gpsData.pop();
+      renderGpsLog();
+      marker.setLatLng([lat, lon]);
+      map.panTo([lat, lon]);
+    }, 5000);
+  </script>
+</body>
+</html>

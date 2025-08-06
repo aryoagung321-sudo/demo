@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  backend:
+    build: ./server
+    env_file: .env
+    volumes:
+      - ./server/uploads:/app/uploads
+    depends_on:
+      - db
+    ports:
+      - "9000:9000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./dashboard-frontend
+    env_file: .env
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: adminpass
+      POSTGRES_DB: demo_db
+    volumes:
+      - demo_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  demo_pgdata: 

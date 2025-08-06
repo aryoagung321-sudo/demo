@@ -1,0 +1,21 @@
+{
+  "name": "demo-backend",
+  "version": "1.0.0",
+  "description": "Backend for Demo Admin Dashboard",
+  "main": "ws-server.js",
+  "scripts": {
+    "start": "node main.js",
+    "start:user": "node user-api.js",
+    "start:file": "node file-api.js",
+    "dev": "nodemon main.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

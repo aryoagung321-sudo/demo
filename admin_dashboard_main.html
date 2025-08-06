@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Home</title>
+  <!-- ... style omitted for brevity ... -->
+</head>
+<body>
+  <div class="header">
+    <h1>Dashboard Admin</h1>
+    <span>Monitoring & Kontrol Perangkat User</span>
+  </div>
+  <div class="container">
+    <div class="metrics">
+      <div class="metric">
+        <div class="num" id="userCount">8</div>
+        <div>Total User Aktif</div>
+      </div>
+      <!-- ... other metrics ... -->
+    </div>
+    <div class="actions">
+      <button onclick="alert('Tambah user baru!')">+ Tambah User</button>
+      <!-- ... -->
+    </div>
+    <h3>Daftar User</h3>
+    <table>
+      <tr>
+        <th>Nama</th>
+        <th>Nomor HP</th>
+        <th>Status</th>
+        <th>Last Active</th>
+        <th>Fitur Aktif</th>
+        <th>Device</th>
+        <th>Command</th>
+        <th>Aksi</th>
+      </tr>
+      <tbody id="usersTable"></tbody>
+    </table>
+  </div>
+  <script>
+    // ... JavaScript to render users ...
+  </script>
+</body>
+</html>
